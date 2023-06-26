@@ -22,7 +22,7 @@ import { getBlockHeader, getBlocks, getState } from "./api.js";
 import { log } from "./logger.js";
 import path from "node:path";
 import { writeFile } from "node:fs/promises";
-// Copied from https://github.com/ChainSafe/Zipline/blob/f37d2c5c7be81a5ae6c203c9c60e8dba0968e017/zipline-verifier/src/state_patch.rs#L15
+// Copied from https://github.com/ChainSafe/Zipline-Casper/blob/f37d2c5c7be81a5ae6c203c9c60e8dba0968e017/zipline-verifier/src/state_patch.rs#L15
 const MAX_ACTIVATIONS = 256;
 const MAX_EXITS = 256;
 

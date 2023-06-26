@@ -4,7 +4,7 @@ The verifier wraps the finality client in a way that can be executed within Cann
 
 ## State Reader
 
-The state reader for the Zipline verifier relies on the pre-image oracle and SSZ Merklization to make state access both memory efficient and cheap. Only the required 32 bytes of the state is loaded at any one time. The [SszStateReader](https://github.com/ChainSafe/Zipline/blob/main/finality-client/src/ssz_state_reader.rs) illustrates how this strategy is used to retrieve the required state chunks.
+The state reader for the Zipline verifier relies on the pre-image oracle and SSZ Merklization to make state access both memory efficient and cheap. Only the required 32 bytes of the state is loaded at any one time. The [SszStateReader](https://github.com/ChainSafe/Zipline-Casper/blob/main/finality-client/src/ssz_state_reader.rs) illustrates how this strategy is used to retrieve the required state chunks.
 
 ## Building for baremetal MIPS target
 
