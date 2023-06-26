@@ -1,0 +1,9 @@
+[package]
+name = "zipline-spec"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+typenum = "1.16.0"
+ssz-rs = { git = "https://github.com/willemolding/ssz-rs", rev = "c689476", default-features = false }
+hex-literal = "0.3.4"

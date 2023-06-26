@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "ssz-rs",
+    "ssz-rs-derive",
+]

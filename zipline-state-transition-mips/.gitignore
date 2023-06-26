@@ -1,0 +1,7 @@
+target
+build
+venv
+zipline-state-transition
+mainnet_target
+minimal_target
+spec_test_target

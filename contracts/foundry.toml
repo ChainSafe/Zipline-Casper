@@ -1,0 +1,12 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+
+solc_version = '0.7.6'
+
+[fmt]
+line_length = 100
+tab_width = 4
+bracket_spacing = true
+ignore = ["lib"]

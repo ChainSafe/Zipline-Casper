@@ -1,0 +1,18 @@
+[submodule "contracts/lib/forge-std"]
+	path = contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "contracts/lib/cannon"]
+	path = contracts/lib/cannon
+	url = https://github.com/ethereum-optimism/cannon
+[submodule "contracts/lib/openzeppelin-contracts"]
+	path = contracts/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "hashi-adapter/lib/forge-std"]
+	path = hashi-adapter/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "hashi-adapter/lib/hashi"]
+	path = hashi-adapter/lib/hashi
+	url = https://github.com/gnosis/hashi
+[submodule "hashi-adapter/lib/solidity-rlp"]
+	path = hashi-adapter/lib/solidity-rlp
+	url = https://github.com/hamdiallam/solidity-rlp

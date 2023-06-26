@@ -1,0 +1,34 @@
+[package]
+name = "zipline-state-transition-mips"
+version = "0.1.0"
+authors = ["Willem Olding <willemolding@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+linked_list_allocator = "0.10.4"
+rlibc = "1.0.0"
+preimage-oracle = { path = "../preimage-oracle", default-features = false, features = ["hashmap-oracle"] }
+zipline-finality-client = { path = "../finality-client" }
+zipline-spec = { path = "../finality-client/libs/zipline-spec" }
+log = "0.4.17"
+[build-dependencies]
+cc = "*"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = "fat"
+codegen-units = 1
+
+[features]
+mainnet = []
+spec_test = []
+minimal = []
+default = ["mainnet"]
+
+# need to patch here as well because this crate isn't part of the workspace
+[patch."https://github.com/ralexstokes/ssz-rs"]
+# patched version to build in restricted_std. Compatible with version of ethereum-consensus above
+ssz-rs = { git = "https://github.com/willemolding/ssz-rs", rev = "c689476" }

@@ -1,0 +1,8 @@
+[package]
+name = "validator-shuffling"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crypto = { path = "../crypto" }
+zipline-spec = { path = "../zipline-spec" }

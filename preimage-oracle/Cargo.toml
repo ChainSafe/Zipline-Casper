@@ -1,0 +1,19 @@
+[package]
+name = "preimage-oracle"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hex = { version = "0.4.3", default-features = false, optional = true }
+sha2 = { version = "0.10.6", optional = true }
+bitvec = { version = "1.0.1", default-features = false, optional = true }
+log = "0.4.17"
+heapless = { version = "0.7"}
+
+[features]
+default = ["hashmap-oracle", "ssz"]
+fs-oracle = ["dep:hex", "hex?/alloc", "dep:sha2"]
+hashmap-oracle = []
+ssz = ["dep:bitvec"]

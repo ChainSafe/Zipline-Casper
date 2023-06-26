@@ -1,0 +1,58 @@
+name: MIPS 
+
+on: 
+  workflow_call:
+
+env:
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
+  CC_mips_unknown_none: mips-linux-gnu-gcc 
+  CXX_mips_unknown_none: mips-linux-gnu-g++
+  CARGO_TARGET_MIPS_UNKNOWN_NONE_LINKER: mips-linux-gnu-gcc
+  RUSTFLAGS: "-Clink-arg=-e_start"
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+      - uses: Swatinem/rust-cache@v2
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.3
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apt Dependencies
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: sudo make -C zipline-state-transition-mips ci_install_deps
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - name: Install python related deps
+        working-directory: zipline-state-transition-mips
+        run: pip install wheel
+             pip install -r requirements.txt
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly 
+          default: true
+          override: true
+          components: rust-src
+      - name: Build Release Mainnet
+        working-directory: zipline-state-transition-mips 
+        run: ./build.sh
+      - name: Build Release Spec Test
+        working-directory: zipline-state-transition-mips 
+        run: SPEC=spec_test ./build.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mainnet_out.bin
+          path: zipline-state-transition-mips/build/mainnet_out.bin
+      - uses: actions/upload-artifact@v3
+        with:
+          name: spec_test_out.bin
+          path: zipline-state-transition-mips/build/spec_test_out.bin

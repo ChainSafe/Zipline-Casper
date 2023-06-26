@@ -1,0 +1,28 @@
+[package]
+name = "cannon-emulator"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "cannon_unicorn"
+path = "src/lib.rs"
+
+[[bin]]
+name = "zipline_unicorn"
+path = "src/main.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+unicorn-engine = { git = "https://github.com/ChainSafe/unicorn" }
+bytes = "1"
+byteorder = "1.4.3"
+hex  = "0.4.3"
+structopt = "0.3.26"
+preimage-oracle = { path = "../preimage-oracle" }
+chrono = "0.4"
+eth_trie = "0.1.0"
+sha2 = "0.10.6"
+base64 = "0.21"
+log = "0.4.18"
+env_logger = "0.10.0"

@@ -1,0 +1,34 @@
+[workspace]
+
+members = [
+    "finality-client/libs/validator-shuffling",
+    "preimage-oracle",
+    "finality-client",
+    "finality-client/libs/zipline-spec",
+    "emulator",
+    "finality-client/libs/crypto",
+    "finality-client/libs/test-utils",
+]
+
+# this is so that when we are doing debug and release builds, we don't 
+# also have to build testing-utils and thus a heck ton of lighthouse
+default-members = [
+    "finality-client/libs/validator-shuffling",
+    "preimage-oracle",
+    "finality-client",
+    "finality-client/libs/zipline-spec",
+    "emulator",
+    "finality-client/libs/crypto"
+]
+exclude = [
+    "zipline-state-transition-mips"
+]
+
+[patch.crates-io]
+blst = { git = "https://github.com/ec2/blst", rev = "179bf0e" }
+[patch."https://github.com/ralexstokes/ethereum-consensus"]
+# ethereum-consensus = { git = "https://github.com/ralexstokes//ethereum-consensus", rev = "ef89b4a4ef97cdd53a66ddb52e554667aca0beb2" }
+[patch."https://github.com/ralexstokes/ssz-rs"]
+# patched version to build in restricted_std. Compatible with version of ethereum-consensus above
+ssz-rs = { path = "./finality-client/libs/ssz-rs/ssz-rs" }
+
