@@ -1,5 +1,5 @@
 use crate::merkleization::{Node, MerkleizationError};
-use std::collections::HashMap;
+use alloc::{vec, vec::Vec, collections::BTreeMap,};
 use sha2::{Digest, Sha256};
 use bitvec::prelude::*;
 
@@ -34,7 +34,7 @@ pub fn is_valid_merkle_branch<'a>(
 
 // only use this method for very small trees. It is extremely inefficient and holds the whole tree in memory (and clones it :())
 pub fn compute_proof(root: &Node, gindex: usize, tree: &[([u8; 32], [u8; 64])]) -> Result<Vec<[u8; 32]>, MerkleizationError> {
-    let tree_map: HashMap<[u8; 32], [u8; 64]>  = tree.iter().cloned().collect();
+    let tree_map: BTreeMap<[u8; 32], [u8; 64]>  = tree.iter().cloned().collect();
     let root: [u8;32] = root.as_ref().try_into().unwrap();
     let (_, proof): (_, Vec<[u8;32]>) = gindex
         .view_bits::<Msb0>()
