@@ -1,3 +1,5 @@
+![](./graphics/banner.png)
+
 # Introduction
 
 Zipline is a permissionless block header oracle from Gasper chains (e.g. Ethereum/Gnosis beacon chains) to EVM chains. It uses fault proofs to ensure that any relayed block roots that have not been finalized by the origin chain will be rejected.
