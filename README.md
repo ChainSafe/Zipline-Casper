@@ -1,4 +1,5 @@
-# Zipline
+![](./specification/src/graphics/banner.png)
+
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ChainSafe/Zipline-Casper/zipline.yml?style=for-the-badge)](https://github.com/ChainSafe/Zipline-Casper/actions)
 [![Specification](https://img.shields.io/badge/doc-book-green?style=for-the-badge)](https://chainsafe.github.io/Zipline-Casper/)
