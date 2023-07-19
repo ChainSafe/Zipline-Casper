@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! `SimpleSerialize` provides a macro to derive SSZ containers and union types from
 //! native Rust structs and enums.
 //! Refer to the `examples` in the `ssz_rs` crate for a better idea on how to use this derive macro.
