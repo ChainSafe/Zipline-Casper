@@ -2,7 +2,24 @@
 
 Bootstraped with [Rust-Cannon-Template](https://github.com/willemolding/rust-cannon-template)
 
-## Building Locally
+## Building with Docker (Recommended)
+
+Docker can be used for cross-compiling MIPS on any host. First build the docker image by running:
+
+```shell
+make docker_image
+# or for Apple Silicon users
+make docker_image_apple_silicon
+```
+
+After this a Cannon ready MIPS binary can be build with:
+```shell
+make build
+```
+
+This will write an `out.bin` file to the build directory.
+
+## Building Locally (Tested Ubuntu 22.04 only)
 
 The build script `build.sh` will cross-compile to the MIPS target and then post-process the resulting elf file into a binary that can be used in the MIPS emulator and proven on-chain.
 
@@ -36,23 +53,6 @@ SPEC=spec_test ./build.sh
 ```
 
 which will output to `build/spec_test_out.bin`
-
-## Building with Docker
-
-Docker can be used for cross-compiling MIPS on any host. First build the docker image by running:
-
-```shell
-make docker_image
-# or for Apple Silicon users
-make docker_image_apple_silicon
-```
-
-After this a Cannon ready MIPS binary can be build with:
-```shell
-make build
-```
-
-This will write an `out.bin` file to the build directory.
 
 ---
 
