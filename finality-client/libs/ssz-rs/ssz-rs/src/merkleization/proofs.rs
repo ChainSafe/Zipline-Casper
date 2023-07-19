@@ -1,7 +1,12 @@
 use crate::merkleization::{MerkleizationError, Node};
 use bitvec::prelude::*;
 use sha2::{Digest, Sha256};
-use std::collections::HashMap;
+
+#[cfg(not(feature = "std"))]
+use alloc::{vec, vec::Vec, collections::BTreeMap as Map};
+
+#[cfg(feature = "std")]
+use std::collections::HashMap as Map;
 
 /// `is_valid_merkle_branch` verifies the Merkle proof
 /// against the `root` given the other metadata.
@@ -39,7 +44,7 @@ pub fn compute_proof(
     gindex: usize,
     tree: &[([u8; 32], [u8; 64])],
 ) -> Result<Vec<[u8; 32]>, MerkleizationError> {
-    let tree_map: HashMap<[u8; 32], [u8; 64]> = tree.iter().cloned().collect();
+    let tree_map: Map<[u8; 32], [u8; 64]> = tree.iter().cloned().collect();
     let root: [u8; 32] = root.as_ref().try_into().unwrap();
     let (_, proof): (_, Vec<[u8; 32]>) = gindex
         .view_bits::<Msb0>()
