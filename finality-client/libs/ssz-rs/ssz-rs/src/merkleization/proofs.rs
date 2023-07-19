@@ -3,7 +3,7 @@ use bitvec::prelude::*;
 use sha2::{Digest, Sha256};
 
 #[cfg(not(feature = "std"))]
-use alloc::{vec, vec::Vec, collections::BTreeMap as Map};
+use alloc::{collections::BTreeMap as Map, vec, vec::Vec};
 
 #[cfg(feature = "std")]
 use std::collections::HashMap as Map;
