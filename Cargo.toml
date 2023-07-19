@@ -24,6 +24,9 @@ exclude = [
     "zipline-state-transition-mips"
 ]
 
+[workspace.dependencies]  
+ssz-rs = { path = "./finality-client/libs/ssz-rs/ssz-rs", default-features = false }
+
 [patch.crates-io]
 blst = { git = "https://github.com/ec2/blst", rev = "179bf0e" }
 [patch."https://github.com/ralexstokes/ethereum-consensus"]
