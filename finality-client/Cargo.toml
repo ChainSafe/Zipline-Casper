@@ -9,7 +9,7 @@ crypto = { path = "libs/crypto" }
 zipline-spec = { path = "libs/zipline-spec" }
 validator-shuffling = { path = "libs/validator-shuffling" }
 log = "0.4.17"
-ssz-rs = { git = "https://github.com/ralexstokes/ssz-rs", default-features = false }
+ssz-rs = { workspace = true }
 hex = { version = "0.4.3", default-features = false }
 typenum = {version = "1.16.0", feature=["no_std"]}
 # snap = "1.1.0" # breaks MIPS build. We could easily patch it though once we need it
@@ -17,7 +17,7 @@ once_cell = {version  = "1.17", default-features = false}
 
 [dev-dependencies]
 env_logger = "0.10.0"
-ethereum-consensus = { git = "https://github.com/ralexstokes/ethereum-consensus" }
+ethereum-consensus = { workspace = true }
 serde = "1.0.158"
 
 test-utils = { path = "libs/test-utils" }

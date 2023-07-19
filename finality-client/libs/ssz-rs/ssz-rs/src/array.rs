@@ -35,7 +35,7 @@ macro_rules! define_ssz_for_array_of_size {
         {
             fn serialize(&self, buffer: &mut Vec<u8>) -> Result<usize, SerializeError> {
                 if $n == 0 {
-                    return Err(TypeError::InvalidBound($n).into());
+                    return Err(TypeError::InvalidBound($n).into())
                 }
                 serialize_composite(self, buffer)
             }
@@ -47,7 +47,7 @@ macro_rules! define_ssz_for_array_of_size {
         {
             fn deserialize(encoding: &[u8]) -> Result<Self, DeserializeError> {
                 if $n == 0 {
-                    return Err(TypeError::InvalidBound($n).into());
+                    return Err(TypeError::InvalidBound($n).into())
                 }
 
                 if !T::is_variable_size() {
@@ -56,13 +56,13 @@ macro_rules! define_ssz_for_array_of_size {
                         return Err(DeserializeError::ExpectedFurtherInput {
                             provided: encoding.len(),
                             expected: expected_length,
-                        });
+                        })
                     }
                     if encoding.len() > expected_length {
                         return Err(DeserializeError::AdditionalInput {
                             provided: encoding.len(),
                             expected: expected_length,
-                        });
+                        })
                     }
                 }
                 let elements = deserialize_homogeneous_composite(encoding)?;

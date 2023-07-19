@@ -89,7 +89,7 @@ impl<T: SimpleSerialize, const N: usize> TryFrom<Vec<T>> for Vector<T, N> {
 
     fn try_from(data: Vec<T>) -> Result<Self, Self::Error> {
         if N == 0 {
-            return Err((data, Error::Type(TypeError::InvalidBound(N))));
+            return Err((data, Error::Type(TypeError::InvalidBound(N))))
         }
         if data.len() != N {
             let len = data.len();
@@ -187,7 +187,7 @@ where
 {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<usize, SerializeError> {
         if N == 0 {
-            return Err(TypeError::InvalidBound(N).into());
+            return Err(TypeError::InvalidBound(N).into())
         }
         serialize_composite(&self.data, buffer)
     }
@@ -199,7 +199,7 @@ where
 {
     fn deserialize(encoding: &[u8]) -> Result<Self, DeserializeError> {
         if N == 0 {
-            return Err(TypeError::InvalidBound(N).into());
+            return Err(TypeError::InvalidBound(N).into())
         }
         if !T::is_variable_size() {
             let expected_length = N * T::size_hint();
@@ -207,13 +207,13 @@ where
                 return Err(DeserializeError::ExpectedFurtherInput {
                     provided: encoding.len(),
                     expected: expected_length,
-                });
+                })
             }
             if encoding.len() > expected_length {
                 return Err(DeserializeError::AdditionalInput {
                     provided: encoding.len(),
                     expected: expected_length,
-                });
+                })
             }
         }
         let inner = deserialize_homogeneous_composite(encoding)?;

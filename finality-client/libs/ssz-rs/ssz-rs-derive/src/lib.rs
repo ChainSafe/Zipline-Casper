@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! `SimpleSerialize` provides a macro to derive SSZ containers and union types from
 //! native Rust structs and enums.
 //! Refer to the `examples` in the `ssz_rs` crate for a better idea on how to use this derive macro.
@@ -180,7 +181,7 @@ fn derive_deserialize_impl(data: &Data) -> TokenStream {
 
                             Ok(container)
                         }
-                    };
+                    }
                 }
                 _ => unimplemented!(
                     "this type of struct is currently not supported by this derive macro"
@@ -469,12 +470,9 @@ fn derive_treeify_impl(data: &Data) -> TokenStream {
                         quote_spanned! { variant.span() =>
                             Self::#variant_name(value) => {
                                 let mut tree = value.to_merkle_tree()?;
-
                                 let selector = #i;
                                 let data_root = value.hash_tree_root()?;
                                 tree.push(ssz_rs::__internal::mix_in_selector_tree(&data_root, selector));
-                                
-
                                 Ok(tree)
                             }
                         }

@@ -10,7 +10,7 @@ use sha2::{Digest, Sha256};
 
 pub use cache::Cache as MerkleCache;
 pub use node::Node;
-pub use proofs::{is_valid_merkle_branch, compute_proof};
+pub use proofs::{compute_proof, is_valid_merkle_branch};
 
 pub(crate) const BYTES_PER_CHUNK: usize = 32;
 
@@ -118,7 +118,7 @@ fn merkleize_chunks_with_virtual_padding(
 
     if chunk_count == 0 {
         let depth = height - 1;
-        return Ok(CONTEXT[depth as usize].try_into().expect("can produce a single root chunk"));
+        return Ok(CONTEXT[depth as usize].try_into().expect("can produce a single root chunk"))
     }
 
     let mut layer = chunks.to_vec();
@@ -193,7 +193,7 @@ fn treeify_chunks_with_virtual_padding(
     let mut ret = vec![];
 
     if chunk_count == 0 {
-        return Ok(ret);
+        return Ok(ret)
     }
 
     let mut layer = chunks.to_vec();
@@ -281,7 +281,7 @@ pub fn merkleize(chunks: &[u8], limit: Option<usize>) -> Result<Node, Merkleizat
     let mut leaf_count = chunk_count.next_power_of_two();
     if let Some(limit) = limit {
         if limit < chunk_count {
-            return Err(MerkleizationError::InputExceedsLimit(limit));
+            return Err(MerkleizationError::InputExceedsLimit(limit))
         }
         leaf_count = limit.next_power_of_two();
     }
@@ -297,7 +297,7 @@ pub fn treeify(
     let mut leaf_count = chunk_count.next_power_of_two();
     if let Some(limit) = limit {
         if limit < chunk_count {
-            return Err(MerkleizationError::InputExceedsLimit(limit));
+            return Err(MerkleizationError::InputExceedsLimit(limit))
         }
         leaf_count = limit.next_power_of_two();
     }

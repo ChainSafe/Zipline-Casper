@@ -188,7 +188,7 @@ where
 {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<usize, SerializeError> {
         if self.len() > N {
-            return Err(InstanceError::Bounded { bound: N, provided: self.len() }.into());
+            return Err(InstanceError::Bounded { bound: N, provided: self.len() }.into())
         }
         serialize_composite(&self.data, buffer)
     }
@@ -201,7 +201,7 @@ where
     fn deserialize(encoding: &[u8]) -> Result<Self, DeserializeError> {
         let result = deserialize_homogeneous_composite(encoding)?;
         if result.len() > N {
-            return Err(InstanceError::Bounded { bound: N, provided: result.len() }.into());
+            return Err(InstanceError::Bounded { bound: N, provided: result.len() }.into())
         }
         let result = result.try_into().map_err(|(_, err)| match err {
             Error::Instance(err) => DeserializeError::InvalidInstance(err),

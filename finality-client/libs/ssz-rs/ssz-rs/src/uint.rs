@@ -33,13 +33,13 @@ macro_rules! define_uint {
                     return Err(DeserializeError::ExpectedFurtherInput {
                         provided: encoding.len(),
                         expected: byte_size,
-                    });
+                    })
                 }
                 if encoding.len() > byte_size {
                     return Err(DeserializeError::AdditionalInput {
                         provided: encoding.len(),
                         expected: byte_size,
-                    });
+                    })
                 }
 
                 let bytes = encoding[..byte_size].try_into().expect("slice has right length");
@@ -155,13 +155,13 @@ impl Deserialize for U256 {
             return Err(DeserializeError::ExpectedFurtherInput {
                 provided: encoding.len(),
                 expected: byte_size,
-            });
+            })
         }
         if encoding.len() > byte_size {
             return Err(DeserializeError::AdditionalInput {
                 provided: encoding.len(),
                 expected: byte_size,
-            });
+            })
         }
 
         let value = BigUint::from_bytes_le(&encoding[..byte_size]);

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 #![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(not(feature = "std"))]
@@ -26,7 +27,7 @@ pub use crate::{
     de::{Deserialize, DeserializeError},
     error::{Error as SimpleSerializeError, InstanceError, TypeError},
     list::List,
-    merkleization::{is_valid_merkle_branch, compute_proof, MerkleizationError, Merkleized, Node},
+    merkleization::{compute_proof, is_valid_merkle_branch, MerkleizationError, Merkleized, Node},
     ser::{Serialize, SerializeError},
     uint::U256,
     utils::{deserialize, serialize},

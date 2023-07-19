@@ -1,7 +1,12 @@
-use crate::merkleization::{Node, MerkleizationError};
-use alloc::{vec, vec::Vec, collections::BTreeMap,};
-use sha2::{Digest, Sha256};
+use crate::merkleization::{MerkleizationError, Node};
 use bitvec::prelude::*;
+use sha2::{Digest, Sha256};
+
+#[cfg(not(feature = "std"))]
+use alloc::{collections::BTreeMap as Map, vec, vec::Vec};
+
+#[cfg(feature = "std")]
+use std::collections::HashMap as Map;
 
 /// `is_valid_merkle_branch` verifies the Merkle proof
 /// against the `root` given the other metadata.
@@ -32,27 +37,34 @@ pub fn is_valid_merkle_branch<'a>(
     value == *root
 }
 
-// only use this method for very small trees. It is extremely inefficient and holds the whole tree in memory (and clones it :())
-pub fn compute_proof(root: &Node, gindex: usize, tree: &[([u8; 32], [u8; 64])]) -> Result<Vec<[u8; 32]>, MerkleizationError> {
-    let tree_map: BTreeMap<[u8; 32], [u8; 64]>  = tree.iter().cloned().collect();
-    let root: [u8;32] = root.as_ref().try_into().unwrap();
-    let (_, proof): (_, Vec<[u8;32]>) = gindex
+// only use this method for very small trees. It is extremely inefficient and holds the whole tree
+// in memory (and clones it :())
+pub fn compute_proof(
+    root: &Node,
+    gindex: usize,
+    tree: &[([u8; 32], [u8; 64])],
+) -> Result<Vec<[u8; 32]>, MerkleizationError> {
+    let tree_map: Map<[u8; 32], [u8; 64]> = tree.iter().cloned().collect();
+    let root: [u8; 32] = root.as_ref().try_into().unwrap();
+    let (_, proof): (_, Vec<[u8; 32]>) = gindex
         .view_bits::<Msb0>()
         .iter()
         .skip_while(|b| b.as_ref() == &false) // skip the leading zeros
         .skip(1) // skip the first 1, this just indicates the root
         .try_fold((root, vec![]), |(hash, mut proof), direction| {
             let leaves = tree_map.get(hash.as_ref()).ok_or(MerkleizationError::MissingNode)?;
-            let mut left = [0_u8;32];
-            let mut right = [0_u8;32];
+            let mut left = [0_u8; 32];
+            let mut right = [0_u8; 32];
             left.copy_from_slice(&leaves[0..32]);
             right.copy_from_slice(&leaves[32..64]);
             match direction.as_ref() {
-                false => { // left
+                false => {
+                    // left
                     proof.insert(0, right.try_into().unwrap());
                     Ok::<_, MerkleizationError>((left, proof))
                 }
-                true => { //right
+                true => {
+                    //right
                     proof.insert(0, left.try_into().unwrap());
                     Ok((right, proof))
                 }

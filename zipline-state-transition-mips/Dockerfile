@@ -1,12 +1,11 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV SHELL=/bin/bash
 ENV DEBIAN_FRONTEND noninteractive
-# Use this specific version of rust. This is needed because versions of rust after this one broke
-# support for -Zbuild-std for the embedded targets.
-ENV RUST_VERSION nightly
+ENV RUST_VERSION nightly-2023-05-03
 
 RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
+    ca-certificates \
     build-essential \
     curl \
     g++-mips-linux-gnu \
@@ -16,7 +15,7 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
     make \
     cmake \
     git \
-    python3 python3.8-venv python3-pip 
+    python3 python3-venv python3-pip 
 
 
 RUN pip3 install wheel
