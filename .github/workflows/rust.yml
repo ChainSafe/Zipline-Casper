@@ -24,11 +24,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           lfs: true
-      - uses: Swatinem/rust-cache@v2
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install development tools
         uses: taiki-e/install-action@v2.4.2
         with:

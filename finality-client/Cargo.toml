@@ -17,7 +17,7 @@ once_cell = {version  = "1.17", default-features = false}
 
 [dev-dependencies]
 env_logger = "0.10.0"
-ethereum-consensus = { git = "https://github.com/ralexstokes/ethereum-consensus" }
+ethereum-consensus = { workspace = true }
 serde = "1.0.158"
 
 test-utils = { path = "libs/test-utils" }
