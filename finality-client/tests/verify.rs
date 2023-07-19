@@ -169,7 +169,7 @@ fn ssz_mainnet() {
     use std::io::Read;
     let mut preims = alloc::collections::btree_map::BTreeMap::new();
 
-    while let Ok(_) = preimages_file.read_exact(&mut im) {
+    while preimages_file.read_exact(&mut im).is_ok() {
         preimages_file.read_exact(&mut pre).unwrap();
         preims.insert(im, pre.to_vec());
     }
@@ -178,7 +178,7 @@ fn ssz_mainnet() {
     let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
 
     let input_hash = hash(&serialize(&inputs_deser).unwrap());
-    preims.insert(input_hash.clone().try_into().unwrap(), inputs);
+    preims.insert(input_hash.try_into().unwrap(), inputs);
 
     let hashmap_oracle = HashMapOracle::from(preims);
     let reader = SszStateReader::new(
@@ -196,7 +196,7 @@ fn ssz_mainnet() {
     >(reader, inputs_deser)
     .unwrap();
 
-    assert_eq!(result, true);
+    assert!(result);
 }
 
 // Ignore because it takes too long to run
@@ -212,7 +212,7 @@ fn unicorn_mainnet() {
     let mut im = [0; 32];
     use std::io::Read;
     let mut preims = alloc::collections::btree_map::BTreeMap::new();
-    while let Ok(_) = preimages_file.read_exact(&mut im) {
+    while preimages_file.read_exact(&mut im).is_ok() {
         preimages_file.read_exact(&mut pre).unwrap();
         preims.insert(im, pre.to_vec());
     }
@@ -375,7 +375,7 @@ fn make_test_oracle_provider<
 
     let ssz_nodes = state.to_merkle_tree().unwrap();
     let mut provider: Map<[u8; 32], Vec<u8>> =
-        Map::from_iter(ssz_nodes.iter().map(|(k, v)| (k.clone(), v.to_vec())));
+        Map::from_iter(ssz_nodes.iter().map(|(k, v)| (*k, v.to_vec())));
 
     let input_bytes = serialize(input).unwrap();
     let input_hash = hash(&input_bytes);
