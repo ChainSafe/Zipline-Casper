@@ -35,8 +35,8 @@ jobs:
           tool: cargo-nextest,just
       - name: Install `rust` toolchain
         run: |
-          rustup toolchain install nightly --no-self-update --profile minimal
-          rustup default nightly
+          rustup toolchain install nightly-2023-05-03 --no-self-update --profile minimal
+          rustup default nightly-2023-05-03
       - name: Setup protoc
         uses: arduino/setup-protoc@v1.1.2
       - name: Download consensus-spec-tests
@@ -84,7 +84,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: nightly-2023-05-03
           override: true
           components: clippy,rustfmt
       - name: Run cargo fmt
