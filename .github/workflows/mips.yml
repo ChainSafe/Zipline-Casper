@@ -38,7 +38,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2023-05-03 
+          toolchain: nightly 
           default: true
           override: true
           components: rust-src

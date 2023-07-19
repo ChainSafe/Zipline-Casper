@@ -127,7 +127,7 @@ impl<const N: usize> Sized for Bitvector<N> {
 impl<const N: usize> Serialize for Bitvector<N> {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<usize, SerializeError> {
         if N == 0 {
-            return Err(TypeError::InvalidBound(N).into())
+            return Err(TypeError::InvalidBound(N).into());
         }
         let bytes_to_write = Self::size_hint();
         buffer.reserve(bytes_to_write);
@@ -141,7 +141,7 @@ impl<const N: usize> Serialize for Bitvector<N> {
 impl<const N: usize> Deserialize for Bitvector<N> {
     fn deserialize(encoding: &[u8]) -> Result<Self, DeserializeError> {
         if N == 0 {
-            return Err(TypeError::InvalidBound(N).into())
+            return Err(TypeError::InvalidBound(N).into());
         }
 
         let expected_length = byte_length(N);
@@ -149,13 +149,13 @@ impl<const N: usize> Deserialize for Bitvector<N> {
             return Err(DeserializeError::ExpectedFurtherInput {
                 provided: encoding.len(),
                 expected: expected_length,
-            })
+            });
         }
         if encoding.len() > expected_length {
             return Err(DeserializeError::AdditionalInput {
                 provided: encoding.len(),
                 expected: expected_length,
-            })
+            });
         }
 
         let mut result = Self::default();
@@ -167,7 +167,7 @@ impl<const N: usize> Deserialize for Bitvector<N> {
             let last_byte = encoding.last().unwrap();
             let remainder_bits = last_byte >> remainder_count;
             if remainder_bits != 0 {
-                return Err(DeserializeError::InvalidByte(*last_byte))
+                return Err(DeserializeError::InvalidByte(*last_byte));
             }
         }
         Ok(result)

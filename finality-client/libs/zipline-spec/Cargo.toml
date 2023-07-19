@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 typenum = "1.16.0"
-ssz-rs = { workspace = true }
+ssz-rs = { git = "https://github.com/willemolding/ssz-rs", rev = "c689476", default-features = false }
 hex-literal = "0.3.4"

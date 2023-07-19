@@ -44,7 +44,7 @@ where
 {
     fn deserialize(encoding: &[u8]) -> Result<Self, DeserializeError> {
         if encoding.is_empty() {
-            return Err(DeserializeError::ExpectedFurtherInput { provided: 0, expected: 1 })
+            return Err(DeserializeError::ExpectedFurtherInput { provided: 0, expected: 1 });
         }
 
         match encoding[0] {

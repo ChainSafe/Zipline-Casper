@@ -98,7 +98,7 @@ impl<const N: usize> Bitlist<N> {
         with_length_bit: bool,
     ) -> Result<usize, SerializeError> {
         if self.len() > N {
-            return Err(InstanceError::Bounded { bound: N, provided: self.len() }.into())
+            return Err(InstanceError::Bounded { bound: N, provided: self.len() }.into());
         }
         let start_len = buffer.len();
         buffer.extend_from_slice(self.as_raw_slice());
@@ -151,14 +151,14 @@ impl<const N: usize> Deserialize for Bitlist<N> {
     fn deserialize(encoding: &[u8]) -> Result<Self, DeserializeError> {
         let max_len = byte_length(N);
         if encoding.is_empty() {
-            return Err(DeserializeError::ExpectedFurtherInput { provided: 0, expected: max_len })
+            return Err(DeserializeError::ExpectedFurtherInput { provided: 0, expected: max_len });
         }
 
         if encoding.len() > max_len {
             return Err(DeserializeError::AdditionalInput {
                 provided: encoding.len(),
                 expected: max_len,
-            })
+            });
         }
 
         let (last_byte, prefix) = encoding.split_last().unwrap();
@@ -167,7 +167,7 @@ impl<const N: usize> Deserialize for Bitlist<N> {
         let high_bit_index = 8 - last.trailing_zeros();
 
         if !last[high_bit_index - 1] {
-            return Err(DeserializeError::InvalidByte(*last_byte))
+            return Err(DeserializeError::InvalidByte(*last_byte));
         }
 
         for bit in last.iter().take(high_bit_index - 1) {
@@ -175,7 +175,7 @@ impl<const N: usize> Deserialize for Bitlist<N> {
         }
         // TODO: this seems redundant...
         if result.len() > N {
-            return Err(InstanceError::Bounded { bound: N, provided: result.len() }.into())
+            return Err(InstanceError::Bounded { bound: N, provided: result.len() }.into());
         }
         Ok(Self(result))
     }

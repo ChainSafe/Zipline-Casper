@@ -58,7 +58,7 @@ pub fn serialize_composite_from_components(
 ) -> Result<usize, SerializeError> {
     let total_size = fixed_lengths_sum + variable_lengths.iter().sum::<usize>();
     if total_size as u64 >= MAXIMUM_LENGTH {
-        return Err(SerializeError::MaximumEncodedLengthExceeded(total_size))
+        return Err(SerializeError::MaximumEncodedLengthExceeded(total_size));
     }
 
     let mut total_bytes_written = 0;

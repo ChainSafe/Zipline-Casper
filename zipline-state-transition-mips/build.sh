@@ -12,7 +12,7 @@ CXX_mips_unknown_none=mips-linux-gnu-g++ \
 CARGO_TARGET_MIPS_UNKNOWN_NONE_LINKER=mips-linux-gnu-gcc \
 RUSTFLAGS="-Clink-arg=-e_start" \
 CARGO_TARGET_DIR=${SPEC}_target \
-    cargo +nightly-2023-05-03 build --verbose --release --target=mips-unknown-none.json  -Zbuild-std --no-default-features --features="$SPEC"
+    cargo +nightly build --verbose --release --target=mips-unknown-none.json  -Zbuild-std --no-default-features --features="$SPEC"
 
 python3 -m venv venv
 

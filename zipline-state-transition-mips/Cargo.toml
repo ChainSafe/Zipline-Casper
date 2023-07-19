@@ -29,5 +29,6 @@ minimal = []
 default = ["mainnet"]
 
 # need to patch here as well because this crate isn't part of the workspace
-[patch.crates-io]
-blst = { git = "https://github.com/ec2/blst", rev = "179bf0e" }
+[patch."https://github.com/ralexstokes/ssz-rs"]
+# patched version to build in restricted_std. Compatible with version of ethereum-consensus above
+ssz-rs = { git = "https://github.com/willemolding/ssz-rs", rev = "c689476" }

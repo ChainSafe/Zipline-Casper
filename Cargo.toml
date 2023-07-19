@@ -24,14 +24,10 @@ exclude = [
     "zipline-state-transition-mips"
 ]
 
-[workspace.dependencies]  
-ssz-rs = { path = "./finality-client/libs/ssz-rs/ssz-rs", default-features = false }
-ethereum-consensus = { git = "https://github.com/ralexstokes/ethereum-consensus" }
-
 [patch.crates-io]
 blst = { git = "https://github.com/ec2/blst", rev = "179bf0e" }
 [patch."https://github.com/ralexstokes/ethereum-consensus"]
-ethereum-consensus = { git = "https://github.com/ralexstokes//ethereum-consensus", rev = "ef89b4a4ef97cdd53a66ddb52e554667aca0beb2" }
+# ethereum-consensus = { git = "https://github.com/ralexstokes//ethereum-consensus", rev = "ef89b4a4ef97cdd53a66ddb52e554667aca0beb2" }
 [patch."https://github.com/ralexstokes/ssz-rs"]
 # patched version to build in restricted_std. Compatible with version of ethereum-consensus above
 ssz-rs = { path = "./finality-client/libs/ssz-rs/ssz-rs" }
