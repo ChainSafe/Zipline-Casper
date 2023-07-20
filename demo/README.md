@@ -13,12 +13,22 @@ This node script runs a demo that shows how the Zipline contract, off-chain emul
 cd ../contracts
 forge install
 ```
-- Build the `zipline-state-transition-mips` binary for the spec test. See [readme](../zipline-state-transition-mips/README.md) for details
-    - Alternatively you can download a pre-built binary from the repo (see the actions/build-artifacts) and put it in the `zipline-state-transition-mips/build/spec_test_out.bin`
+- Build the `zipline-state-transition-mips` binary for the spec test. Instructions here are for docker build. See [readme](../zipline-state-transition-mips/README.md) for alternatives
+```shell
+cd ../zipline-state-transition-mips
+make docker_image # or make docker_image_apple_silicon if using a M1 or M2 processor
+make build_spectest_spec
+```
+    - Alternatively you can download a pre-built binary from the repo (see the actions/build-artifacts) and copy it to `zipline-state-transition-mips/build/spec_test_out.bin`
 
+- Build the emulator
+```shell
+cd ../emulator
+cargo build --release
+```
 ## Running the demo
 
-1. Start an Ethereum testnet by running
+1. In a separate terminal, Start an Ethereum testnet by running. Make sure to leave this running
 
 ```shell
 anvil

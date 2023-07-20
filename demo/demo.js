@@ -44,9 +44,13 @@ async function main() {
     // sha256 hash the zipline input
     let input_hash = crypto.createHash('sha256').update(zipline_input).digest().toString('hex');
     
-
+    console.log("Getting golden snapshot root. This will take a while (minutes) the first time as it has to build the emulator");
     let golden_root = await get_golden_snapshot_root();
+    console.log("Got root: ", golden_root);
+
+    console.log("Getting initial snapshot root...");
     let initial_snapshot = await get_initial_snapshot_root(input_hash);
+    console.log("Got root: ", initial_snapshot);
     
     // Deploy the Zipline contracts
     let contracts = await deploy_zipline_contracts(golden_root, trusted_epoch, trusted_block_root);
@@ -59,7 +63,7 @@ async function main() {
     
     // BOB opens a challenge against ALICE
     console.log(`2. BOB sees ALICE's checkpoint at epoch ${candidate_epoch} with root: ${fraud_candidate_block_root} is fraudulent\n`);
-    console.log(`2. BOB computes the final snapshot as the result of executing the Casper finality checks (will take some time)`);
+    console.log(`2. BOB computes the final snapshot as the result of executing the Casper finality checks (will may take several minutes)`);
     const { new_challenge_unicorn_process, final_snapshot, steps } = await start_unicorn_new_challenge(input_hash, true);
     
     console.log(`2. BOB opens a challenge and submits a new rival checkpoint at epoch ${candidate_epoch} with root: ${candidate_block_root}\n`);
@@ -67,7 +71,7 @@ async function main() {
 
     // Get the first correct dissection of the trace by Alice
     // this includes an intentional error in the trace located at fuckup_step
-    console.log(`3. ALICE runs a trace dissection from steps 0 to ${steps} with ${k_sections} sections (we intentionally introduce missteps to demostrate faulty execution) (will take some time)\n`);
+    console.log(`3. ALICE runs a trace dissection from steps 0 to ${steps} with ${k_sections} sections (we intentionally introduce missteps to demostrate faulty execution) (will take several minutes)\n`);
     let snapshots = await dissect_trace(input_hash, 0, steps, k_sections, fuckup_step);
     console.log(`3. ALICE has produced ${snapshots.length} trace snapshots: $${snapshots}`);
 
