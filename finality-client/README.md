@@ -54,6 +54,7 @@ Tests are derived from the [ethereum consensus spec tests](https://github.com/et
 
 1. Download the spec test: `just download-integration-tests`
 2. Derive and cache the zipline tests from the spec tests: `just cache-zipline-tests`
+3. Build the spec test MIPS binary: `cd ../zipline-state-transition-mips && make build_spectest_spec`
 
 Now it is possible to run the integration tests with
 
