@@ -38,7 +38,7 @@ async function main() {
     let [trusted_epoch, trusted_block_root] = fs.readFileSync('./demo_data/trusted_cp.txt', 'utf8').split(":");
     let [candidate_epoch, candidate_block_root] = fs.readFileSync('./demo_data/candidate_cp.txt', 'utf8').split(":");
     let [_, fraud_candidate_block_root] = fs.readFileSync('./demo_data/fraud_candidate_cp.txt', 'utf8').split(":");
-    console.log(`0. Current trusted epoch ${trusted_epoch} with root: ${candidate_block_root}`);
+    console.log(`0. Current trusted epoch ${trusted_epoch} with root: ${trusted_block_root}`);
 
     let zipline_input = fs.readFileSync('./demo_data/input.ssz.bin');
     // sha256 hash the zipline input
