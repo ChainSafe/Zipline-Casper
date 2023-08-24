@@ -34,7 +34,7 @@ fn setup() {
 }
 
 fn same_randao<T: PreimageOracle<[u8; 32]>, S: Spec>(
-    direct_state_reader: &DirectStateReader,
+    direct_state_reader: &DirectStateReader<spec::BeaconState>,
     ssz_state_reader: &SszStateReader<T, S>,
 ) -> Result<(), StateReadError> {
     for i in 0..S::epochs_per_historical_vector() {
@@ -47,7 +47,7 @@ fn same_randao<T: PreimageOracle<[u8; 32]>, S: Spec>(
 }
 
 fn same_validator_count<T: PreimageOracle<[u8; 32]>, S: Spec>(
-    direct_state_reader: &DirectStateReader,
+    direct_state_reader: &DirectStateReader<spec::BeaconState>,
     ssz_state_reader: &SszStateReader<T, S>,
 ) -> Result<(), StateReadError> {
     assert_eq!(
@@ -58,7 +58,7 @@ fn same_validator_count<T: PreimageOracle<[u8; 32]>, S: Spec>(
 }
 
 fn same_active_validators<T: PreimageOracle<[u8; 32]>, S: Spec>(
-    direct_state_reader: &DirectStateReader,
+    direct_state_reader: &DirectStateReader<spec::BeaconState>,
     ssz_state_reader: &SszStateReader<T, S>,
     epoch: u64,
 ) -> Result<(), StateReadError> {
@@ -70,7 +70,7 @@ fn same_active_validators<T: PreimageOracle<[u8; 32]>, S: Spec>(
 }
 
 fn same_validator_activation_and_exits<T: PreimageOracle<[u8; 32]>, S: Spec>(
-    direct_state_reader: &DirectStateReader,
+    direct_state_reader: &DirectStateReader<spec::BeaconState>,
     ssz_state_reader: &SszStateReader<T, S>,
     n_validators: usize,
 ) -> Result<(), StateReadError> {

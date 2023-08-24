@@ -30,6 +30,12 @@ The tests also require some cached local files. Build these using
 just cache-zipline-tests
 ```
 
+If you have not already be sure to retrieve some test fixtures from git lfs
+
+```shell
+git lfs pull
+```
+
 ## Implementation Details
 ### State Reader
 

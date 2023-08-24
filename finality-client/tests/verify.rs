@@ -5,6 +5,7 @@ use alloc::vec::Vec;
 use cannon_unicorn::{new_cannon_unicorn, run, write_input, write_program, TraceConfig, UnsyncRam};
 use crypto::hash::hash;
 use ethereum_consensus::bellatrix::mainnet as spec;
+use ethereum_consensus::capella;
 use preimage_oracle::hashmap_oracle::HashMapOracle;
 use ssz_rs::prelude::*;
 use std::io::Write;
@@ -13,6 +14,8 @@ use zipline_finality_client::ssz_state_reader::{PatchedSszStateReader, SszStateR
 use zipline_finality_client::{input::ZiplineInput, verify};
 use zipline_spec::{MainnetSpec, SpecTestSpec};
 use zipline_test_case::ZiplineTestCase;
+use std::io::Read;
+
 
 use crate::direct_state_reader::DirectStateReader;
 use crate::direct_state_reader::PatchedDirectStateReader;
@@ -244,43 +247,42 @@ fn unicorn_mainnet() {
 #[test]
 #[ignore]
 fn native_mainnet() {
-    // setup();
-    // let gen_path: &str = "./tests/test_files";
+    setup();
+    let gen_path: &str = "./tests/test_files";
 
-    // let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
-    // let mut pre = [0; 64];
-    // let mut im = [0; 32];
-    // use std::io::Read;
-    // let mut preims = alloc::collections::btree_map::BTreeMap::new();
+    let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
+    let mut pre = [0; 64];
+    let mut im = [0; 32];
+    let mut preims = alloc::collections::btree_map::BTreeMap::new();
 
-    // while let Ok(_) = preimages_file.read_exact(&mut im) {
-    //     preimages_file.read_exact(&mut pre).unwrap();
-    //     preims.insert(im, pre.to_vec());
-    // }
-    // // use zipline_spec::Spec;
-    // // // let mine = MainnetSpec;
+    while let Ok(_) = preimages_file.read_exact(&mut im) {
+        preimages_file.read_exact(&mut pre).unwrap();
+        preims.insert(im, pre.to_vec());
+    }
 
-    // let beaconstatefile = std::fs::read(format!("{gen_path}/state196726")).unwrap();
-    // let state: ethereum_consensus::capella::mainnet::BeaconState =
-    //     deserialize(&beaconstatefile).unwrap();
-    // let reader = DirectStateReader::new(state);
+    // the mainnet states are capella states rather than bellatrix like the minimal tests
+    let beaconstatefile = std::fs::read(format!("{gen_path}/state196726")).unwrap();
+    let state: ethereum_consensus:: capella::mainnet::BeaconState =
+        deserialize(&beaconstatefile).unwrap();
+    let reader = DirectStateReader::new(state);
 
-    // let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
-    // let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
+    let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
+    let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
 
-    // log::info!(
-    //     "Patched Randaos: {:?}",
-    //     inputs_deser.patches.iter().collect::<Vec<_>>()
-    // );
+    log::info!(
+        "Patched Randaos: {:?}",
+        inputs_deser.patches.iter().collect::<Vec<_>>()
+    );
 
-    // let result = verify::<
-    //     MainnetSpec,
-    //     PatchedDirectStateReader,
-    //     { spec::MAX_VALIDATORS_PER_COMMITTEE },
-    //     10000,
-    //     256,
-    // >(reader, inputs_deser)
-    // .unwrap();
+    let result = verify::<
+        MainnetSpec,
+        PatchedDirectStateReader<spec::BeaconState>,
+        { spec::MAX_VALIDATORS_PER_COMMITTEE },
+        10000,
+        256,
+    >(reader, inputs_deser)
+    .unwrap();
+    assert!(result);
 }
 
 /////////////////////////////
