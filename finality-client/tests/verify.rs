@@ -276,7 +276,7 @@ fn native_mainnet() {
 
     let result = verify::<
         MainnetSpec,
-        PatchedDirectStateReader<spec::BeaconState>,
+        PatchedDirectStateReader<DirectStateReader<capella::mainnet::BeaconState>>,
         { spec::MAX_VALIDATORS_PER_COMMITTEE },
         10000,
         256,
@@ -298,7 +298,7 @@ fn run_test_native(mut test: ZiplineTestCase) {
     let reader = DirectStateReader::new(test.state.clone());
     let result = verify::<
         SpecTestSpec,
-        PatchedDirectStateReader,
+        PatchedDirectStateReader<DirectStateReader<spec::BeaconState>>,
         { spec::MAX_VALIDATORS_PER_COMMITTEE },
         1000,
         10,

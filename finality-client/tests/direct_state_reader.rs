@@ -1,5 +1,5 @@
 use crypto::bls::PublicKey;
-use ethereum_consensus::bellatrix::get_active_validator_indices;
+use ethereum_consensus::bellatrix::{get_active_validator_indices, self};
 use ssz_rs::prelude::*;
 use validator_shuffling::get_randao_index;
 use zipline_finality_client::state_patch::StatePatch;
@@ -114,7 +114,13 @@ impl StateReader for DirectStateReader<ethereum_consensus::capella::mainnet::Bea
     }
 
     fn get_active_validator_indices(&self, epoch: u64) -> Result<Vec<usize>, StateReadError> {
-        Ok(get_active_validator_indices(&self.state, epoch))
+        Ok(self.state.validators.iter().enumerate().filter_map(|(index, validator)| {
+            if validator.activation_epoch <= epoch && epoch < validator.exit_epoch {
+                Some(index)
+            } else {
+                None
+            }
+        }).collect())
     }
 
     fn get_randao<S: Spec>(&self, epoch: u64) -> Result<[u8; 32], StateReadError> {
