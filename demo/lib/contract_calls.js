@@ -24,7 +24,7 @@ async function open_challenge(unicorn_process, caller, contracts, epoch, rival_s
         } catch (e) {
             current_missing = parseToMissingTrieNode(e);
             if (current_missing.length != 64) {
-                return null 
+                throw new Error("Create challenge failed with: " + e.message)
             }
             let preimage = await get_preimage(unicorn_process, current_missing);
 
