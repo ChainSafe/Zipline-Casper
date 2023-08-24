@@ -30,7 +30,16 @@ The tests also require some cached local files. Build these using
 just cache-zipline-tests
 ```
 
-If you have not already be sure to retrieve some test fixtures from git lfs
+Build the spec test and mainnet configured MIPS binaries
+
+```shell
+cd ../zipline-state-transition-mips
+make docker_image
+make build
+make build_spectest_spec
+```
+
+Also, if you have not already be sure to retrieve some test fixtures from git lfs
 
 ```shell
 git lfs pull
@@ -52,20 +61,3 @@ The finality client introduces the idea of state patches for a beacon state. The
 - number of deposits processed
 
 Using state patches allows starting at the state as of a trusted checkpoint and projecting forward in time to verify attestations in near future epochs.
-## Testing
-
-### Integration Tests
-
-Tests are derived from the [ethereum consensus spec tests](https://github.com/ethereum/consensus-spec-tests/). There are a number of steps required to get the integration tests running:
-
-1. Download the spec test: `just download-integration-tests`
-2. Derive and cache the zipline tests from the spec tests: `just cache-zipline-tests`
-3. Build the spec test MIPS binary: `cd ../zipline-state-transition-mips && make build_spectest_spec`
-
-Now it is possible to run the integration tests with
-
-`cargo test -p zipline-finality-client`
-
-It is highly reccomended to enable logging by setting the correct env vars and cargo test flags
-
-`RUST_LOG=info cargo test test_finality_rule_3 -- --nocapture`
