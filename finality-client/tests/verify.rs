@@ -210,36 +210,32 @@ fn unicorn_mainnet() {
     let program = std::fs::read(MIPS_MAINNET_BIN_PATH).expect("failed to find MIPS binary");
     let gen_path: &str = "./tests/test_files";
 
-    let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
-    let mut pre = [0; 64];
-    let mut im = [0; 32];
-    use std::io::Read;
-    let mut preims = alloc::collections::btree_map::BTreeMap::new();
-    while preimages_file.read_exact(&mut im).is_ok() {
-        preimages_file.read_exact(&mut pre).unwrap();
-        preims.insert(im, pre.to_vec());
-    }
-    let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
-    let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
+    let input_bytes = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
+    let input: ZiplineInput<2048, 10000, 256> = deserialize(&input_bytes).unwrap();
 
-    let input_hash = hash(&serialize(&inputs_deser).unwrap());
-    preims.insert(input_hash.clone().try_into().unwrap(), inputs);
+    let state_bytes = std::fs::read(format!("{gen_path}/state196726")).unwrap();
+    let mut state: ethereum_consensus:: capella::mainnet::BeaconState =
+        deserialize(&state_bytes).unwrap();
 
-    let mut mu = new_cannon_unicorn(UnsyncRam::new(), preims, None, TraceConfig::NewChallenge);
+    let oracle_provider = make_test_oracle_provider(&input, &mut state);
 
-    // let result = start(&mut mu, &program, &input_hash.try_into().unwrap());
+    let mut mu = new_cannon_unicorn(UnsyncRam::new(), oracle_provider, None, TraceConfig::NewChallenge);
 
     write_program(&mut mu, &program);
+    let input_hash = hash(&serialize(&input).unwrap());
     write_input(&mut mu, &input_hash.try_into().unwrap());
+
     // Run in the emulator!
     let (snapshot, steps, emulation_output) = run(&mut mu, 0);
 
     let mut expected_result = [0xff_u8; 68];
     expected_result[..4].copy_from_slice(&[0x13, 0x37, 0xf0, 0x0d]);
     expected_result[4..].copy_from_slice(&[0x00; 64]);
-    println!("snapshot: {:?}", snapshot);
-    println!("steps: {:?}", steps);
-    println!("emulation_output: {:?}", emulation_output);
+
+    log::trace!("snapshot: {:?}", snapshot);
+    log::trace!("steps: {:?}", steps);
+    log::trace!("emulation_output: {:?}", emulation_output);
+
     assert_eq!(emulation_output, expected_result);
 }
 
@@ -268,11 +264,6 @@ fn native_mainnet() {
 
     let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
     let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
-
-    log::info!(
-        "Patched Randaos: {:?}",
-        inputs_deser.patches.iter().collect::<Vec<_>>()
-    );
 
     let result = verify::<
         MainnetSpec,
@@ -362,12 +353,13 @@ fn run_test_unicorn(mut test: ZiplineTestCase) {
 }
 
 fn make_test_oracle_provider<
+    T: ssz_rs::SimpleSerialize,
     const MAX_COMMITTEE_SIZE: usize,
     const MAX_ATTESTATIONS: usize,
     const MAX_PATCHES: usize,
 >(
     input: &ZiplineInput<MAX_COMMITTEE_SIZE, MAX_ATTESTATIONS, MAX_PATCHES>,
-    state: &mut spec::BeaconState,
+    state: &mut T,
 ) -> Map<[u8; 32], Vec<u8>> {
     let state_root = state.hash_tree_root().unwrap();
     assert_eq!(

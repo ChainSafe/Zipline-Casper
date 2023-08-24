@@ -8,7 +8,7 @@ docker_image_apple_silicon:
 .PHONY: build
 
 build:
-	docker run --rm -v $(shell pwd)/..:/code/ zipline-state-transition-mips/builder
+	docker run --rm -e SPEC='mainnet' -v $(shell pwd)/..:/code/ zipline-state-transition-mips/builder
 build_spectest_spec:
 	docker run --rm -e SPEC='spec_test' -v $(shell pwd)/..:/code/ zipline-state-transition-mips/builder
 build_minimal_spec:

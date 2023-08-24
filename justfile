@@ -22,7 +22,7 @@ cache-zipline-tests: # warning this is slow. Takes a few minutes
 test:
     cargo test --release
 slow-tests:
-    cargo test -p zipline-finality-client native_mainnet -- --ignored
+    cargo test -p zipline-finality-client native_mainnet unicorn_mainnet -- --ignored
 fmt:
     cargo fmt --all
 lint: fmt
