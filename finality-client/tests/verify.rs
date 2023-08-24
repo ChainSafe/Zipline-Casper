@@ -169,7 +169,7 @@ fn ssz_mainnet() {
     let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
     let mut pre = [0; 64];
     let mut im = [0; 32];
-    use std::io::Read;
+
     let mut preims = alloc::collections::btree_map::BTreeMap::new();
 
     while preimages_file.read_exact(&mut im).is_ok() {
@@ -210,19 +210,26 @@ fn unicorn_mainnet() {
     let program = std::fs::read(MIPS_MAINNET_BIN_PATH).expect("failed to find MIPS binary");
     let gen_path: &str = "./tests/test_files";
 
-    let input_bytes = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
-    let input: ZiplineInput<2048, 10000, 256> = deserialize(&input_bytes).unwrap();
+    let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
+    let mut pre = [0; 64];
+    let mut im = [0; 32];
+    
+    let mut preims = alloc::collections::btree_map::BTreeMap::new();
 
-    let state_bytes = std::fs::read(format!("{gen_path}/state196726")).unwrap();
-    let mut state: ethereum_consensus:: capella::mainnet::BeaconState =
-        deserialize(&state_bytes).unwrap();
+    while preimages_file.read_exact(&mut im).is_ok() {
+        preimages_file.read_exact(&mut pre).unwrap();
+        preims.insert(im, pre.to_vec());
+    }
 
-    let oracle_provider = make_test_oracle_provider(&input, &mut state);
+    let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
+    let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
 
-    let mut mu = new_cannon_unicorn(UnsyncRam::new(), oracle_provider, None, TraceConfig::NewChallenge);
+    let input_hash = hash(&serialize(&inputs_deser).unwrap());
+    preims.insert(input_hash.clone().try_into().unwrap(), inputs);
+
+    let mut mu = new_cannon_unicorn(UnsyncRam::new(), preims, None, TraceConfig::Turbo);
 
     write_program(&mut mu, &program);
-    let input_hash = hash(&serialize(&input).unwrap());
     write_input(&mut mu, &input_hash.try_into().unwrap());
 
     // Run in the emulator!
@@ -331,7 +338,7 @@ fn run_test_unicorn(mut test: ZiplineTestCase) {
         UnsyncRam::new(),
         oracle_provider,
         None,
-        TraceConfig::NewChallenge,
+        TraceConfig::Turbo,
     );
 
     let input_hash = hash(&serialize(&input).unwrap());
