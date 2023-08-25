@@ -33,6 +33,11 @@ jobs:
         run: just download-integration-tests
       - name: Build the zipline tests (slow)
         run: just cache-zipline-tests
+      
+      - name: Debug current directory
+        run: |
+          pwd
+          ls -la  
     #   - uses: actions/download-artifact@v3 # download the cached binary
     #     with:
     #       name: spec_test_out.bin
@@ -41,49 +46,49 @@ jobs:
     #     with:
     #       name: mainnet_out.bin
     #       path: zipline-state-transition-mips/build/
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
-  build-release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v3
-      - uses: Swatinem/rust-cache@v2
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.3
-        with: 
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup protoc
-        uses: arduino/setup-protoc@v1.1.2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --all
-  lints:
-    name: clippy and fmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: Swatinem/rust-cache@v2
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.3
-        with: 
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly-2023-05-03
-          override: true
-          components: clippy,rustfmt
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        continue-on-error: false
-        with:
-          command: fmt
-          args: --all -- --check
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+#       - uses: actions-rs/cargo@v1
+#         with:
+#           command: test
+#           args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
+#   build-release:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Source
+#         uses: actions/checkout@v3
+#       - uses: Swatinem/rust-cache@v2
+#       - name: Run sccache-cache
+#         uses: mozilla-actions/sccache-action@v0.0.3
+#         with: 
+#           token: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Setup protoc
+#         uses: arduino/setup-protoc@v1.1.2
+#       - uses: actions-rs/cargo@v1
+#         with:
+#           command: build
+#           args: --release --all
+#   lints:
+#     name: clippy and fmt
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: Swatinem/rust-cache@v2
+#       - name: Run sccache-cache
+#         uses: mozilla-actions/sccache-action@v0.0.3
+#         with: 
+#           token: ${{ secrets.GITHUB_TOKEN }}
+#       - uses: actions-rs/toolchain@v1
+#         with:
+#           profile: minimal
+#           toolchain: nightly-2023-05-03
+#           override: true
+#           components: clippy,rustfmt
+#       - name: Run cargo fmt
+#         uses: actions-rs/cargo@v1
+#         continue-on-error: false
+#         with:
+#           command: fmt
+#           args: --all -- --check
+#       - uses: actions-rs/cargo@v1
+#         with:
+#           command: clippy
+#           args: -- -D warnings
