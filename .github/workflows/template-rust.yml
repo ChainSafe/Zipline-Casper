@@ -37,15 +37,20 @@ jobs:
       - name: Debug current directory
         run: |
           pwd
-          ls -la  
-      - uses: actions/download-artifact@v3 # download the cached binary
-        with:
-          name: spec_test_out.bin
-          path: zipline-state-transition-mips/build/
-      - uses: actions/download-artifact@v3 # download the cached binary
+          ls -la 
+          cd zipline-state-transition-mips
+          ls -la
+          cd build
+          ls -la
+
+      - uses: actions/upload-artifact@v3
         with:
           name: mainnet_out.bin
-          path: zipline-state-transition-mips/build/
+          path: zipline-state-transition-mips/build/mainnet_out.bin
+      - uses: actions/upload-artifact@v3
+        with:
+          name: spec_test_out.bin
+          path: zipline-state-transition-mips/build/spec_test_out.bin
       - uses: actions-rs/cargo@v1
         with:
           command: test

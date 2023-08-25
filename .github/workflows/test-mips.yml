@@ -54,6 +54,15 @@ jobs:
       - name: Build Release Spec Test
         working-directory: zipline-state-transition-mips 
         run: SPEC=spec_test ./build.sh
+        
+      - name: Debug current directory
+        run: |
+          pwd
+          ls -la 
+          cd zipline-state-transition-mips
+          ls -la
+          cd build
+          ls -la        
     #   - uses: actions/upload-artifact@v3
     #     with:
     #       name: mainnet_out.bin
