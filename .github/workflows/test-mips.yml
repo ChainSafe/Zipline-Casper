@@ -17,7 +17,7 @@ env:
   RUSTFLAGS: "-Clink-arg=-e_start"
 
 jobs:
-  build-release:
+  build-mips:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
@@ -64,4 +64,5 @@ jobs:
     #       path: zipline-state-transition-mips/build/spec_test_out.bin
   test-rust:
     uses: ChainSafe/Zipline-Casper/.github/workflows/template-rust.yml@optimize-binary-rust
+    needs: build-mips
 
