@@ -22,7 +22,8 @@ cache-zipline-tests: # warning this is slow. Takes a few minutes
 test:
     cargo test --release
 slow-tests:
-    cargo test -p zipline-finality-client native_mainnet unicorn_mainnet -- --ignored
+    echo "These tests area very slow!! Expect 4-6 hours to complete"
+    RUST_LOG=trace cargo test --release -p zipline-finality-client mainnet -- --ignored --nocapture
 fmt:
     cargo fmt --all
 lint: fmt

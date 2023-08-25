@@ -45,6 +45,20 @@ Also, if you have not already be sure to retrieve some test fixtures from git lf
 git lfs pull
 ```
 
+Run the tests with
+
+```shell
+cargo test --release
+```
+
+and the slow tests with
+
+```shell
+cargo test --release -p zipline-finality-client mainnet -- --ignored
+```
+
+Expect the mainnet test to take 4-6 hours to complete.
+
 ## Implementation Details
 ### State Reader
 
