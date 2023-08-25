@@ -9,7 +9,6 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
-    needs: build-mips
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
