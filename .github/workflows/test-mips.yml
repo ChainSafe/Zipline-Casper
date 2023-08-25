@@ -80,7 +80,7 @@ jobs:
 
       - name: Download consensus-spec-tests
         run: just download-integration-tests
-        
+
       - name: Build the zipline tests (slow)
         run: just cache-zipline-tests
 
@@ -92,4 +92,3 @@ jobs:
   test-rust:
     uses: ChainSafe/Zipline-Casper/.github/workflows/template-rust.yml@optimize-binary-rust
     needs: build-mips
-
