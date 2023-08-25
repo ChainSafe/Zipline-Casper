@@ -63,4 +63,5 @@ jobs:
     #       name: spec_test_out.bin
     #       path: zipline-state-transition-mips/build/spec_test_out.bin
   test-rust:
-    uses: ./.github/workflows/template-rust.yml
+    uses: ChainSafe/Zipline-Casper/.github/workflows/template-rust.yml@optimize-binary-rust
+
