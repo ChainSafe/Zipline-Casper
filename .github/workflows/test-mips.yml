@@ -22,25 +22,33 @@ jobs:
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
+        with:
+          lfs: true
+
       - uses: Swatinem/rust-cache@v2
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.3
         with: 
           token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Apt Dependencies
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 5
           max_attempts: 3
           command: sudo make -C zipline-state-transition-mips ci_install_deps
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
+
       - name: Install python related deps
         working-directory: zipline-state-transition-mips
         run: pip install wheel
              pip install -r requirements.txt
+
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -48,13 +56,34 @@ jobs:
           default: true
           override: true
           components: rust-src
+
       - name: Build Release Mainnet
         working-directory: zipline-state-transition-mips 
         run: ./build.sh
+
       - name: Build Release Spec Test
         working-directory: zipline-state-transition-mips 
         run: SPEC=spec_test ./build.sh
+
+      - name: Install development tools
+        uses: taiki-e/install-action@v2.4.2
+        with:
+          tool: cargo-nextest,just
+
+      - name: Install `rust` toolchain
+        run: |
+          rustup toolchain install nightly-2023-05-03 --no-self-update --profile minimal
+          rustup default nightly-2023-05-03
+
+      - name: Setup protoc
+        uses: arduino/setup-protoc@v1.1.2
+
+      - name: Download consensus-spec-tests
+        run: just download-integration-tests
         
+      - name: Build the zipline tests (slow)
+        run: just cache-zipline-tests
+
       - uses: actions-rs/cargo@v1
         with:
           command: test
