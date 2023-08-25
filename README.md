@@ -1,6 +1,6 @@
 ![](./specification/src/graphics/banner.png)
 
-[![Apache V2 License](https://img.shields.io/github/license/ChainSafe/Zipline-Casper.svg?style=for-the-badge)]([https://github.com/ChainSafe/Zipline-Casper/actions](https://github.com/ChainSafe/Zipline-Casper/blob/master/LICENSE))
+[![Apache V2 License](https://img.shields.io/github/license/ChainSafe/Zipline-Casper.svg?style=for-the-badge)](https://github.com/ChainSafe/Zipline-Casper/blob/master/LICENSE)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ChainSafe/Zipline-Casper/zipline.yml?style=for-the-badge)](https://github.com/ChainSafe/Zipline-Casper/actions)
 [![Specification](https://img.shields.io/badge/doc-book-green?style=for-the-badge)](https://chainsafe.github.io/Zipline-Casper/)
 
