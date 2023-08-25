@@ -234,7 +234,11 @@ impl ZiplineTestCase {
         }
     }
 
-    pub fn from_input(input: ZiplineInput<{ spec::MAX_VALIDATORS_PER_COMMITTEE }, 1000, 10>, state: BeaconState, expected: bool) -> Self {
+    pub fn from_input(
+        input: ZiplineInput<{ spec::MAX_VALIDATORS_PER_COMMITTEE }, 1000, 10>,
+        state: BeaconState,
+        expected: bool,
+    ) -> Self {
         assert_eq!(state.clone().hash_tree_root().unwrap(), input.state_root);
         Self {
             state,

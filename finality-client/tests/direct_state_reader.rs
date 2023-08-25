@@ -1,11 +1,11 @@
 use crypto::bls::PublicKey;
-use ethereum_consensus::bellatrix::{get_active_validator_indices, self};
+use ethereum_consensus::bellatrix::{self, get_active_validator_indices};
 use ssz_rs::prelude::*;
+use ssz_rs::SimpleSerialize;
 use validator_shuffling::get_randao_index;
 use zipline_finality_client::state_patch::StatePatch;
 use zipline_finality_client::state_reader::{PatchedStateReader, StateReadError, StateReader};
 use zipline_spec::Spec;
-use ssz_rs::SimpleSerialize;
 
 // holds a eth-consensus BeaconState object which it can read from directly
 // useful for testing only
@@ -114,13 +114,19 @@ impl StateReader for DirectStateReader<ethereum_consensus::capella::mainnet::Bea
     }
 
     fn get_active_validator_indices(&self, epoch: u64) -> Result<Vec<usize>, StateReadError> {
-        Ok(self.state.validators.iter().enumerate().filter_map(|(index, validator)| {
-            if validator.activation_epoch <= epoch && epoch < validator.exit_epoch {
-                Some(index)
-            } else {
-                None
-            }
-        }).collect())
+        Ok(self
+            .state
+            .validators
+            .iter()
+            .enumerate()
+            .filter_map(|(index, validator)| {
+                if validator.activation_epoch <= epoch && epoch < validator.exit_epoch {
+                    Some(index)
+                } else {
+                    None
+                }
+            })
+            .collect())
     }
 
     fn get_randao<S: Spec>(&self, epoch: u64) -> Result<[u8; 32], StateReadError> {

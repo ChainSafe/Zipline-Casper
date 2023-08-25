@@ -8,14 +8,13 @@ use ethereum_consensus::bellatrix::mainnet as spec;
 use ethereum_consensus::capella;
 use preimage_oracle::hashmap_oracle::HashMapOracle;
 use ssz_rs::prelude::*;
+use std::io::Read;
 use std::io::Write;
 use std::sync::Once;
 use zipline_finality_client::ssz_state_reader::{PatchedSszStateReader, SszStateReader};
 use zipline_finality_client::{input::ZiplineInput, verify};
 use zipline_spec::{MainnetSpec, SpecTestSpec};
 use zipline_test_case::ZiplineTestCase;
-use std::io::Read;
-
 
 use crate::direct_state_reader::DirectStateReader;
 use crate::direct_state_reader::PatchedDirectStateReader;
@@ -213,7 +212,7 @@ fn unicorn_mainnet() {
     let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
     let mut pre = [0; 64];
     let mut im = [0; 32];
-    
+
     let mut preims = alloc::collections::btree_map::BTreeMap::new();
 
     while preimages_file.read_exact(&mut im).is_ok() {
@@ -265,7 +264,7 @@ fn native_mainnet() {
 
     // the mainnet states are capella states rather than bellatrix like the minimal tests
     let beaconstatefile = std::fs::read(format!("{gen_path}/state196726")).unwrap();
-    let state: ethereum_consensus:: capella::mainnet::BeaconState =
+    let state: ethereum_consensus::capella::mainnet::BeaconState =
         deserialize(&beaconstatefile).unwrap();
     let reader = DirectStateReader::new(state);
 
@@ -334,12 +333,7 @@ fn run_test_unicorn(mut test: ZiplineTestCase) {
 
     let oracle_provider = make_test_oracle_provider(&input, &mut test.state);
 
-    let mut mu = new_cannon_unicorn(
-        UnsyncRam::new(),
-        oracle_provider,
-        None,
-        TraceConfig::Turbo,
-    );
+    let mut mu = new_cannon_unicorn(UnsyncRam::new(), oracle_provider, None, TraceConfig::Turbo);
 
     let input_hash = hash(&serialize(&input).unwrap());
     write_program(&mut mu, &program);
