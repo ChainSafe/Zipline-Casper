@@ -38,18 +38,18 @@ jobs:
         run: |
           pwd
           ls -la  
-    #   - uses: actions/download-artifact@v3 # download the cached binary
-    #     with:
-    #       name: spec_test_out.bin
-    #       path: zipline-state-transition-mips/build/
-    #   - uses: actions/download-artifact@v3 # download the cached binary
-    #     with:
-    #       name: mainnet_out.bin
-    #       path: zipline-state-transition-mips/build/
-#       - uses: actions-rs/cargo@v1
-#         with:
-#           command: test
-#           args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
+      - uses: actions/download-artifact@v3 # download the cached binary
+        with:
+          name: spec_test_out.bin
+          path: zipline-state-transition-mips/build/
+      - uses: actions/download-artifact@v3 # download the cached binary
+        with:
+          name: mainnet_out.bin
+          path: zipline-state-transition-mips/build/
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
 #   build-release:
 #     runs-on: ubuntu-latest
 #     steps:
