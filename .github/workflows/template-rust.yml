@@ -7,93 +7,45 @@ env:
   RUSTC_WRAPPER: "sccache"
 
 jobs:
-  test:
+  build-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
-        with:
-          lfs: true
       - uses: Swatinem/rust-cache@v2
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.3
-        with:
+        with: 
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install development tools
-        uses: taiki-e/install-action@v2.4.2
-        with:
-          tool: cargo-nextest,just
-      - name: Install `rust` toolchain
-        run: |
-          rustup toolchain install nightly-2023-05-03 --no-self-update --profile minimal
-          rustup default nightly-2023-05-03
       - name: Setup protoc
         uses: arduino/setup-protoc@v1.1.2
-      - name: Download consensus-spec-tests
-        run: just download-integration-tests
-      - name: Build the zipline tests (slow)
-        run: just cache-zipline-tests
-      
-      - name: Debug current directory
-        run: |
-          pwd
-          ls -la 
-          cd zipline-state-transition-mips
-          ls -la
-          cd build
-          ls -la
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: mainnet_out.bin
-          path: zipline-state-transition-mips/build/mainnet_out.bin
-      - uses: actions/upload-artifact@v3
-        with:
-          name: spec_test_out.bin
-          path: zipline-state-transition-mips/build/spec_test_out.bin
       - uses: actions-rs/cargo@v1
         with:
-          command: test
-          args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
-#   build-release:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout Source
-#         uses: actions/checkout@v3
-#       - uses: Swatinem/rust-cache@v2
-#       - name: Run sccache-cache
-#         uses: mozilla-actions/sccache-action@v0.0.3
-#         with: 
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#       - name: Setup protoc
-#         uses: arduino/setup-protoc@v1.1.2
-#       - uses: actions-rs/cargo@v1
-#         with:
-#           command: build
-#           args: --release --all
-#   lints:
-#     name: clippy and fmt
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: Swatinem/rust-cache@v2
-#       - name: Run sccache-cache
-#         uses: mozilla-actions/sccache-action@v0.0.3
-#         with: 
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#       - uses: actions-rs/toolchain@v1
-#         with:
-#           profile: minimal
-#           toolchain: nightly-2023-05-03
-#           override: true
-#           components: clippy,rustfmt
-#       - name: Run cargo fmt
-#         uses: actions-rs/cargo@v1
-#         continue-on-error: false
-#         with:
-#           command: fmt
-#           args: --all -- --check
-#       - uses: actions-rs/cargo@v1
-#         with:
-#           command: clippy
-#           args: -- -D warnings
+          command: build
+          args: --release --all
+  lints:
+    name: clippy and fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: Swatinem/rust-cache@v2
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.3
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2023-05-03
+          override: true
+          components: clippy,rustfmt
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        continue-on-error: false
+        with:
+          command: fmt
+          args: --all -- --check
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -- -D warnings
