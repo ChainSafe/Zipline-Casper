@@ -4,10 +4,10 @@ on:
     workflow_dispatch:
     push:
         branches:
-        - main
-    pull_request:
-        branches:
-        - main
+        - test-optimize-binary
+    # pull_request:
+    #     branches:
+    #     - test-optimize-binary
 env:
   SCCACHE_GHA_ENABLED: "true"
   RUSTC_WRAPPER: "sccache"
@@ -90,5 +90,5 @@ jobs:
           args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
 
   test-rust:
-    uses: ChainSafe/Zipline-Casper/.github/workflows/rust.yml@main
+    uses: ChainSafe/Zipline-Casper/.github/workflows/rust.yml@test-optimize-binary
     needs: build-mips
