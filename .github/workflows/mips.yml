@@ -90,5 +90,5 @@ jobs:
           args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
 
   test-rust:
-    uses: ChainSafe/Zipline-Casper/.github/workflows/rust.yml@test-optimize-binary
+    uses: ChainSafe/Zipline-Casper/.github/workflows/rust.yml@fix/optimize-binary-rust
     needs: build-mips
