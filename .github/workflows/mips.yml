@@ -1,13 +1,13 @@
 name: MIPS 
 
 on: 
-    workflow_dispatch:
-    push:
-        branches:
-        - test-optimize-binary
-    # pull_request:
+    # workflow_dispatch:
+    # push:
     #     branches:
     #     - test-optimize-binary
+    pull_request:
+        branches:
+        - test-optimize-binary
 env:
   SCCACHE_GHA_ENABLED: "true"
   RUSTC_WRAPPER: "sccache"
