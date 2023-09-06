@@ -1,8 +1,13 @@
 name: MIPS 
 
 on: 
-  workflow_call:
-
+    workflow_dispatch:
+    push:
+        branches:
+        - main
+    pull_request:
+        branches:
+        - main
 env:
   SCCACHE_GHA_ENABLED: "true"
   RUSTC_WRAPPER: "sccache"
@@ -10,31 +15,40 @@ env:
   CXX_mips_unknown_none: mips-linux-gnu-g++
   CARGO_TARGET_MIPS_UNKNOWN_NONE_LINKER: mips-linux-gnu-gcc
   RUSTFLAGS: "-Clink-arg=-e_start"
+
 jobs:
-  build-release:
+  build-mips:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
+        with:
+          lfs: true
+
       - uses: Swatinem/rust-cache@v2
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.3
         with: 
           token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Apt Dependencies
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 5
           max_attempts: 3
           command: sudo make -C zipline-state-transition-mips ci_install_deps
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
+
       - name: Install python related deps
         working-directory: zipline-state-transition-mips
         run: pip install wheel
              pip install -r requirements.txt
+
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -42,17 +56,39 @@ jobs:
           default: true
           override: true
           components: rust-src
+
       - name: Build Release Mainnet
         working-directory: zipline-state-transition-mips 
         run: ./build.sh
+
       - name: Build Release Spec Test
         working-directory: zipline-state-transition-mips 
         run: SPEC=spec_test ./build.sh
-      - uses: actions/upload-artifact@v3
+
+      - name: Install development tools
+        uses: taiki-e/install-action@v2.4.2
         with:
-          name: mainnet_out.bin
-          path: zipline-state-transition-mips/build/mainnet_out.bin
-      - uses: actions/upload-artifact@v3
+          tool: cargo-nextest,just
+
+      - name: Install `rust` toolchain
+        run: |
+          rustup toolchain install nightly-2023-05-03 --no-self-update --profile minimal
+          rustup default nightly-2023-05-03
+
+      - name: Setup protoc
+        uses: arduino/setup-protoc@v1.1.2
+
+      - name: Download consensus-spec-tests
+        run: just download-integration-tests
+
+      - name: Build the zipline tests (slow)
+        run: just cache-zipline-tests
+
+      - uses: actions-rs/cargo@v1
         with:
-          name: spec_test_out.bin
-          path: zipline-state-transition-mips/build/spec_test_out.bin
+          command: test
+          args: --release -p crypto -p preimage-oracle -p zipline-finality-client -p zipline-spec -p cannon-emulator 
+
+  test-rust:
+    uses: ChainSafe/Zipline-Casper/.github/workflows/rust.yml@main
+    needs: build-mips
