@@ -1,7 +1,7 @@
 ![](./specification/src/graphics/banner.png)
 
 [![Apache V2 License](https://img.shields.io/github/license/ChainSafe/Zipline-Casper.svg?style=for-the-badge)](https://github.com/ChainSafe/Zipline-Casper/blob/main/LICENSE)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ChainSafe/Zipline-Casper/zipline.yml?style=for-the-badge)](https://github.com/ChainSafe/Zipline-Casper/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ChainSafe/Zipline-Casper/rust.yml?style=for-the-badge)](https://github.com/ChainSafe/Zipline-Casper/actions)
 [![Specification](https://img.shields.io/badge/doc-book-green?style=for-the-badge)](https://chainsafe.github.io/Zipline-Casper/)
 
 Zipline is a permissionless block header oracle from Gasper chains (Ethereum/Gnosis beacon chain) to EVM chains! It uses fault proofs to ensure that any relayed block roots that have not been finalized by the origin chain can be proven fraudulent.
