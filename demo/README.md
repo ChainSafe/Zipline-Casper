@@ -6,6 +6,7 @@ This node script runs a demo that shows how the Zipline contract, off-chain emul
 
 ## Prerequisites
 
+- Ensure `pkg-config` is installed (e.g. `brew install pkg-config` or `apt install pkg-config` or an alternative method)
 - Install node (tested with v16 but any newer version should work)
 - Install [Foundry](https://getfoundry.sh/)
 - Install the contract dependencies

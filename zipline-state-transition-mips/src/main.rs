@@ -61,8 +61,6 @@ pub extern "C" fn _start() {
     } else {
         iommu::output([0xff; 32]);
     }
-
-    // iommu::output([0x00; 32]);
 }
 
 #[panic_handler]

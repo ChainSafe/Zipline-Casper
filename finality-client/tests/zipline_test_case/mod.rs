@@ -233,6 +233,23 @@ impl ZiplineTestCase {
             state_proof: self.state_proof.clone(),
         }
     }
+
+    pub fn from_input(
+        input: ZiplineInput<{ spec::MAX_VALIDATORS_PER_COMMITTEE }, 1000, 10>,
+        state: BeaconState,
+        expected: bool,
+    ) -> Self {
+        assert_eq!(state.clone().hash_tree_root().unwrap(), input.state_root);
+        Self {
+            state,
+            trusted: input.trusted_cp,
+            candidate: input.candidate_cp,
+            attestations: input.attestations,
+            patches: input.patches,
+            state_proof: input.state_proof,
+            expected_result: expected,
+        }
+    }
 }
 
 fn to_zipline_checkpoint(cp: spec::Checkpoint) -> Checkpoint {
@@ -250,16 +267,6 @@ pub fn make_state_proof(b: &mut spec::BeaconBlock) -> Vec<H256> {
     let tree = b.to_merkle_tree().unwrap();
     compute_proof(&b.hash_tree_root().unwrap(), 11, &tree).unwrap()
 }
-
-// fn header_from_block(b: &mut spec::BeaconBlock) -> spec::BeaconBlockHeader {
-//     spec::BeaconBlockHeader {
-//         slot: b.slot,
-//         proposer_index: b.proposer_index,
-//         parent_root: b.parent_root,
-//         state_root: b.state_root,
-//         body_root: b.body.hash_tree_root().unwrap()
-//     }
-// }
 
 pub fn patch_from_states<S: Spec>(
     before: &spec::BeaconState,

@@ -1,3 +1,6 @@
+default:
+  just --list
+
 download-integration-tests: clean-integration-tests
     #!/usr/bin/env sh
     TESTS_TAG=v1.1.10
@@ -14,10 +17,13 @@ clean-integration-tests:
     rm -rf consensus-spec-testss
 
 cache-zipline-tests: # warning this is slow. Takes a few minutes
-    cargo test --release -p zipline-finality-client -- --ignored --nocapture --skip unicorn_mainnet --skip cache_demo_files
+    cargo test --release -p zipline-finality-client -- --ignored --nocapture --skip unicorn_mainnet --skip cache_demo_files --skip native_mainnet
 
 test:
     cargo test --release
+slow-tests:
+    echo "These tests area very slow!! Expect 4-6 hours to complete"
+    RUST_LOG=trace cargo test --release -p zipline-finality-client mainnet -- --ignored --nocapture
 fmt:
     cargo fmt --all
 lint: fmt

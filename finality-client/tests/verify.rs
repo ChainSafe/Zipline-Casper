@@ -5,8 +5,10 @@ use alloc::vec::Vec;
 use cannon_unicorn::{new_cannon_unicorn, run, write_input, write_program, TraceConfig, UnsyncRam};
 use crypto::hash::hash;
 use ethereum_consensus::bellatrix::mainnet as spec;
+use ethereum_consensus::capella;
 use preimage_oracle::hashmap_oracle::HashMapOracle;
 use ssz_rs::prelude::*;
+use std::io::Read;
 use std::io::Write;
 use std::sync::Once;
 use zipline_finality_client::ssz_state_reader::{PatchedSszStateReader, SszStateReader};
@@ -166,7 +168,7 @@ fn ssz_mainnet() {
     let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
     let mut pre = [0; 64];
     let mut im = [0; 32];
-    use std::io::Read;
+
     let mut preims = alloc::collections::btree_map::BTreeMap::new();
 
     while preimages_file.read_exact(&mut im).is_ok() {
@@ -210,33 +212,36 @@ fn unicorn_mainnet() {
     let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
     let mut pre = [0; 64];
     let mut im = [0; 32];
-    use std::io::Read;
+
     let mut preims = alloc::collections::btree_map::BTreeMap::new();
+
     while preimages_file.read_exact(&mut im).is_ok() {
         preimages_file.read_exact(&mut pre).unwrap();
         preims.insert(im, pre.to_vec());
     }
+
     let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
     let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
 
     let input_hash = hash(&serialize(&inputs_deser).unwrap());
     preims.insert(input_hash.clone().try_into().unwrap(), inputs);
 
-    let mut mu = new_cannon_unicorn(UnsyncRam::new(), preims, None, TraceConfig::NewChallenge);
-
-    // let result = start(&mut mu, &program, &input_hash.try_into().unwrap());
+    let mut mu = new_cannon_unicorn(UnsyncRam::new(), preims, None, TraceConfig::Turbo);
 
     write_program(&mut mu, &program);
     write_input(&mut mu, &input_hash.try_into().unwrap());
+
     // Run in the emulator!
     let (snapshot, steps, emulation_output) = run(&mut mu, 0);
 
     let mut expected_result = [0xff_u8; 68];
     expected_result[..4].copy_from_slice(&[0x13, 0x37, 0xf0, 0x0d]);
     expected_result[4..].copy_from_slice(&[0x00; 64]);
-    println!("snapshot: {:?}", snapshot);
-    println!("steps: {:?}", steps);
-    println!("emulation_output: {:?}", emulation_output);
+
+    log::trace!("snapshot: {:?}", snapshot);
+    log::trace!("steps: {:?}", steps);
+    log::trace!("emulation_output: {:?}", emulation_output);
+
     assert_eq!(emulation_output, expected_result);
 }
 
@@ -244,43 +249,37 @@ fn unicorn_mainnet() {
 #[test]
 #[ignore]
 fn native_mainnet() {
-    // setup();
-    // let gen_path: &str = "./tests/test_files";
+    setup();
+    let gen_path: &str = "./tests/test_files";
 
-    // let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
-    // let mut pre = [0; 64];
-    // let mut im = [0; 32];
-    // use std::io::Read;
-    // let mut preims = alloc::collections::btree_map::BTreeMap::new();
+    let mut preimages_file = std::fs::File::open(format!("{gen_path}/preimages.bin")).unwrap();
+    let mut pre = [0; 64];
+    let mut im = [0; 32];
+    let mut preims = alloc::collections::btree_map::BTreeMap::new();
 
-    // while let Ok(_) = preimages_file.read_exact(&mut im) {
-    //     preimages_file.read_exact(&mut pre).unwrap();
-    //     preims.insert(im, pre.to_vec());
-    // }
-    // // use zipline_spec::Spec;
-    // // // let mine = MainnetSpec;
+    while let Ok(_) = preimages_file.read_exact(&mut im) {
+        preimages_file.read_exact(&mut pre).unwrap();
+        preims.insert(im, pre.to_vec());
+    }
 
-    // let beaconstatefile = std::fs::read(format!("{gen_path}/state196726")).unwrap();
-    // let state: ethereum_consensus::capella::mainnet::BeaconState =
-    //     deserialize(&beaconstatefile).unwrap();
-    // let reader = DirectStateReader::new(state);
+    // the mainnet states are capella states rather than bellatrix like the minimal tests
+    let beaconstatefile = std::fs::read(format!("{gen_path}/state196726")).unwrap();
+    let state: ethereum_consensus::capella::mainnet::BeaconState =
+        deserialize(&beaconstatefile).unwrap();
+    let reader = DirectStateReader::new(state);
 
-    // let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
-    // let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
+    let inputs = std::fs::read(format!("{gen_path}/input.ssz")).unwrap();
+    let inputs_deser: ZiplineInput<2048, 10000, 256> = deserialize(&inputs).unwrap();
 
-    // log::info!(
-    //     "Patched Randaos: {:?}",
-    //     inputs_deser.patches.iter().collect::<Vec<_>>()
-    // );
-
-    // let result = verify::<
-    //     MainnetSpec,
-    //     PatchedDirectStateReader,
-    //     { spec::MAX_VALIDATORS_PER_COMMITTEE },
-    //     10000,
-    //     256,
-    // >(reader, inputs_deser)
-    // .unwrap();
+    let result = verify::<
+        MainnetSpec,
+        PatchedDirectStateReader<DirectStateReader<capella::mainnet::BeaconState>>,
+        { spec::MAX_VALIDATORS_PER_COMMITTEE },
+        10000,
+        256,
+    >(reader, inputs_deser)
+    .unwrap();
+    assert!(result);
 }
 
 /////////////////////////////
@@ -296,7 +295,7 @@ fn run_test_native(mut test: ZiplineTestCase) {
     let reader = DirectStateReader::new(test.state.clone());
     let result = verify::<
         SpecTestSpec,
-        PatchedDirectStateReader,
+        PatchedDirectStateReader<DirectStateReader<spec::BeaconState>>,
         { spec::MAX_VALIDATORS_PER_COMMITTEE },
         1000,
         10,
@@ -334,12 +333,7 @@ fn run_test_unicorn(mut test: ZiplineTestCase) {
 
     let oracle_provider = make_test_oracle_provider(&input, &mut test.state);
 
-    let mut mu = new_cannon_unicorn(
-        UnsyncRam::new(),
-        oracle_provider,
-        None,
-        TraceConfig::NewChallenge,
-    );
+    let mut mu = new_cannon_unicorn(UnsyncRam::new(), oracle_provider, None, TraceConfig::Turbo);
 
     let input_hash = hash(&serialize(&input).unwrap());
     write_program(&mut mu, &program);
@@ -360,12 +354,13 @@ fn run_test_unicorn(mut test: ZiplineTestCase) {
 }
 
 fn make_test_oracle_provider<
+    T: ssz_rs::SimpleSerialize,
     const MAX_COMMITTEE_SIZE: usize,
     const MAX_ATTESTATIONS: usize,
     const MAX_PATCHES: usize,
 >(
     input: &ZiplineInput<MAX_COMMITTEE_SIZE, MAX_ATTESTATIONS, MAX_PATCHES>,
-    state: &mut spec::BeaconState,
+    state: &mut T,
 ) -> Map<[u8; 32], Vec<u8>> {
     let state_root = state.hash_tree_root().unwrap();
     assert_eq!(
